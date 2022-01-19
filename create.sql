@@ -15,7 +15,7 @@ id serial PRIMARY KEY,
 position VARCHAR,
 email VARCHAR,
 name VARCHAR,
-moduleId int
+moduleId int,
 );
 
 CREATE TABLE sessions(
@@ -24,6 +24,6 @@ invitationLink VARCHAR,
 sessionTime TIMESTAMP,
 type VARCHAR,
 description VARCHAR,
-comments VARCHAR);
+ );
 
 CREATE DATABASE scheduler_test WITH TEMPLATE scheduler;

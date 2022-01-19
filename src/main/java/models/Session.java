@@ -7,14 +7,13 @@ public class Session {
     private String invitationLink;
     private Timestamp sessionTime;
     private String description;
-    private String comments;
+
     private String type;
 
-    public Session(String invitationLink, Timestamp sessionTime, String description, String comments, String type) {
+    public Session(String invitationLink, Timestamp sessionTime, String description, String type) {
         this.invitationLink = invitationLink;
         this.sessionTime = sessionTime;
         this.description = description;
-        this.comments = comments;
         this.type = type;
     }
 
@@ -50,14 +49,6 @@ public class Session {
         this.description = description;
     }
 
-    public String getComments() {
-        return comments;
-    }
-
-    public void setComments(String comments) {
-        this.comments = comments;
-    }
-
     public String getType() {
         return type;
     }
@@ -77,7 +68,6 @@ public class Session {
         if (!invitationLink.equals(session.invitationLink)) return false;
         if (!sessionTime.equals(session.sessionTime)) return false;
         if (!description.equals(session.description)) return false;
-        if (!comments.equals(session.comments)) return false;
         return type.equals(session.type);
     }
 
@@ -87,7 +77,6 @@ public class Session {
         result = 31 * result + invitationLink.hashCode();
         result = 31 * result + sessionTime.hashCode();
         result = 31 * result + description.hashCode();
-        result = 31 * result + comments.hashCode();
         result = 31 * result + type.hashCode();
         return result;
     }

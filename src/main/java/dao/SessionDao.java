@@ -1,10 +1,9 @@
 package dao;
 
-import models.Announcements;
-import models.Modules;
 import models.Session;
 import models.User;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 public interface SessionDao {
@@ -14,14 +13,9 @@ public interface SessionDao {
     //Read
     List<Session> getAllSessions();
     Session getSessionById(int id);
-    List<User> getSessionByUser(int userId);
-    List<Modules> getModuleByUser(int moduleId);
-    List<Announcements> getAnnouncementsByUser(int AnnouncementId);
-
-
-
+    List<User> getUserBySession(int sessionId);
     //Update
-
+    void update(int id,String invitationLink, Timestamp sessionTime, String description,String type);
     //Delete
     void deleteAllSessions();
     void deleteSessionById(int id);
