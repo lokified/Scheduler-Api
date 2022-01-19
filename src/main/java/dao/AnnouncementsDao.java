@@ -12,7 +12,7 @@ public interface AnnouncementsDao {
 
     //read
     List<Announcements> getAll();
-    User getUserAnnouncement(int userId);
+    List<Announcements> getUserAnnouncement(int userId);
     Announcements findById(int id);
 
     //update

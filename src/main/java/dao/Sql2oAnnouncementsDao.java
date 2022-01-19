@@ -1,6 +1,7 @@
 package dao;
 
 import models.Announcements;
+import models.User;
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
 import org.sql2o.Sql2oException;
@@ -39,6 +40,18 @@ public class Sql2oAnnouncementsDao implements AnnouncementsDao {
         try (Connection conn = sql2o.open()){
             String sql = "SELECT * FROM announcements";
             return conn.createQuery(sql)
+                    .executeAndFetch(Announcements.class);
+        }
+    }
+
+    //show announcements by the user
+    @Override
+    public List<Announcements> getUserAnnouncement(int userId) {
+
+        try (Connection conn = sql2o.open()){
+            String sql = "SELECT * FROM announcements WHERE userId = :userId";
+            return conn.createQuery(sql)
+                    .addParameter("userId", userId)
                     .executeAndFetch(Announcements.class);
         }
     }

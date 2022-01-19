@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -51,6 +53,18 @@ public class Sql2oAnnouncementsDaoTest {
         announcementsDao.add(testAnnouncements);
         announcementsDao.add(anotherAnnouncement);
         assertEquals(2, announcementsDao.getAll().size());
+    }
+
+    @Test
+    public void getUserAnnouncement_returnsUserAnnouncementCorrectly() {
+        Announcements testAnnouncement = setUpAnnouncements();
+        announcementsDao.add(testAnnouncement);
+        Announcements anotherAnnouncement = new Announcements("Feedback",1,"wait for feedback");
+        announcementsDao.add(anotherAnnouncement);
+        Announcements otherAnnouncement = new Announcements("Onboarding",2,"wait for feedback");
+        announcementsDao.add(otherAnnouncement);
+        List<Announcements> selectedUserAnnouncements = announcementsDao.getUserAnnouncement(testAnnouncement.getUserId());
+        assertEquals(2, selectedUserAnnouncements.size());
     }
 
     @Test
