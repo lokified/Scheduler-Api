@@ -11,13 +11,9 @@ import java.util.List;
 
 public class Sql2oAnnouncementsDao implements AnnouncementsDao {
 
-    private final Sql2o sql2o;
+    private  Sql2o sql2o;
 
-    public Sql2oAnnouncementsDao(Sql2o sql2o) {
-        this.sql2o = sql2o;
-    }
-
-    //adds announcements
+        //adds announcements
     @Override
     public void add(Announcements announcements) {
         String sql = "INSERT INTO announcements (title, userId, description) VALUES (:title, :userId, :description)";
