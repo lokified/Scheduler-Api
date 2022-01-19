@@ -1,19 +1,18 @@
 package models;
 
 import java.sql.Timestamp;
-import java.util.Objects;
 
 public class Session {
     private int id;
     private String invitationLink;
-    private Timestamp time;
+    private Timestamp sessionTime;
     private String description;
     private String comments;
     private String type;
 
-    public Session(String invitationLink, Timestamp time, String description, String comments, String type) {
+    public Session(String invitationLink, Timestamp sessionTime, String description, String comments, String type) {
         this.invitationLink = invitationLink;
-        this.time = time;
+        this.sessionTime = sessionTime;
         this.description = description;
         this.comments = comments;
         this.type = type;
@@ -35,12 +34,12 @@ public class Session {
         this.invitationLink = invitationLink;
     }
 
-    public Timestamp getTime() {
-        return time;
+    public Timestamp getSessionTime() {
+        return sessionTime;
     }
 
-    public void setTime(Timestamp time) {
-        this.time = time;
+    public void setSessionTime(Timestamp sessionTime) {
+        this.sessionTime = sessionTime;
     }
 
     public String getDescription() {
@@ -76,7 +75,7 @@ public class Session {
 
         if (id != session.id) return false;
         if (!invitationLink.equals(session.invitationLink)) return false;
-        if (!time.equals(session.time)) return false;
+        if (!sessionTime.equals(session.sessionTime)) return false;
         if (!description.equals(session.description)) return false;
         if (!comments.equals(session.comments)) return false;
         return type.equals(session.type);
@@ -86,7 +85,7 @@ public class Session {
     public int hashCode() {
         int result = id;
         result = 31 * result + invitationLink.hashCode();
-        result = 31 * result + time.hashCode();
+        result = 31 * result + sessionTime.hashCode();
         result = 31 * result + description.hashCode();
         result = 31 * result + comments.hashCode();
         result = 31 * result + type.hashCode();

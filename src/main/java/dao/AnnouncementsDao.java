@@ -1,6 +1,7 @@
 package dao;
 
 import models.Announcements;
+import models.User;
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ public interface AnnouncementsDao {
 
     //read
     List<Announcements> getAll();
-
+    User getUserAnnouncement(int userId);
     Announcements findById(int id);
 
     //update
