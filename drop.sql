@@ -1,2 +1,2 @@
 DROP DATABASE scheduler;
-DROP DATABASE vacayfinder_test;
+DROP DATABASE scheduler_test;
