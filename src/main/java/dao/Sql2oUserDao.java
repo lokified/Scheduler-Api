@@ -51,11 +51,11 @@ public class Sql2oUserDao implements UserDao {
     }
 
     @Override
-    public List<Modules> getModuleByUser(int userId) {
+    public Modules getModuleByUser(int userId) {
         try(Connection conn = sql2o.open()){
             return conn.createQuery("SELECT * FROM modules WHERE userId = :userId")
                     .addParameter("userId",userId)
-                    .executeAndFetch(Modules.class);
+                    .executeAndFetchFirst(Modules.class);
         }
     }
 

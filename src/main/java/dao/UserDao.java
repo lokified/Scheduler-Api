@@ -12,7 +12,7 @@ public interface UserDao {
     //Read
     List<User> getAllUsers();
     User getUserById(int id);
-    List<Modules> getModuleByUser(int userId);
+    Modules getModuleByUser(int userId);
 
 
     //Update
