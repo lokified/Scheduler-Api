@@ -12,8 +12,7 @@ CREATE TABLE announcements(
 
 CREATE TABLE modules(
     id serial PRIMARY KEY ,
-    name VARCHAR ,
-    userId INTEGER
+    name VARCHAR
 );
 
 
@@ -22,7 +21,7 @@ id serial PRIMARY KEY,
 position VARCHAR,
 email VARCHAR,
 name VARCHAR,
-moduleId int,
+modules VARCHAR ,
 );
 
 CREATE TABLE sessions(
@@ -34,5 +33,11 @@ endTime TIMESTAMP ,
 description VARCHAR,
 type VARCHAR
  );
+
+CREATE TABLE modules_users(
+    id SERIAL PRIMARY KEY,
+    moduleId INTEGER,
+    userId INTEGER
+);
 
 CREATE DATABASE scheduler_test WITH TEMPLATE scheduler;
