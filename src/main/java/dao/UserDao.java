@@ -12,10 +12,11 @@ public interface UserDao {
     //Read
     List<User> getAllUsers();
     User getUserById(int id);
-    List<Modules> getUserByModule(int moduleId);
+    List<Modules> getModuleByUser(int userId);
 
 
     //Update
+    void update(int id,String position, String email, String name, int moduleId);
 
     //Delete
     void deleteAllUsers();
