@@ -27,10 +27,12 @@ moduleId int,
 
 CREATE TABLE sessions(
 id serial PRIMARY KEY,
+sessionName VARCHAR ,
 invitationLink VARCHAR,
-sessionTime TIMESTAMP,
-type VARCHAR,
+startTime TIMESTAMP ,
+endTime TIMESTAMP ,
 description VARCHAR,
+type VARCHAR
  );
 
 CREATE DATABASE scheduler_test WITH TEMPLATE scheduler;

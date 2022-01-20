@@ -19,7 +19,7 @@ public class Sql2oSessionDao implements SessionDao {
 
     @Override
     public void addSession(Session session) {
-        String sql = "INSERT INTO sessions (invitationLink, sessionTime, type,description) VALUES (:invitationLink, :sessionTime, :type,:description)";
+        String sql = "INSERT INTO sessions (sessionName, invitationLink, startTime, endTime,description, type) VALUES (:sessionName, :invitationLink, :startTime, :endTime,:description, :type)";
 
         try (Connection conn = sql2o.open()){
             int id = (int) conn.createQuery(sql,true)
@@ -64,12 +64,14 @@ public class Sql2oSessionDao implements SessionDao {
     }
 
     @Override
-    public void update(int id,String invitationLink, Timestamp sessionTime, String description,String type) {
+    public void update(int id,String sessionName, String invitationLink, Timestamp startTime, Timestamp endTime, String description,String type) {
         try (Connection conn = sql2o.open()){
             String sql = "UPDATE sessions SET (invitationLink, sessionTime, type,description) = (:invitationLink, :sessionTime, :type,:description) WHERE id = :id";
             conn.createQuery(sql)
+                    .addParameter("sessionName", sessionName)
                     .addParameter("invitationLink", invitationLink)
-                    .addParameter("sessionTime", sessionTime)
+                    .addParameter("startTime", startTime)
+                    .addParameter("endTime", endTime)
                     .addParameter("type", type)
                     .addParameter("description", description)
                     .addParameter("id", id)
