@@ -10,6 +10,13 @@ CREATE TABLE announcements(
     description VARCHAR
 );
 
+CREATE TABLE modules(
+    id serial PRIMARY KEY ,
+    name VARCHAR ,
+    userId INTEGER
+);
+
+
 CREATE TABLE users(
 id serial PRIMARY KEY,
 position VARCHAR,
