@@ -13,7 +13,6 @@ public interface SessionDao {
     //Read
     List<Session> getAllSessions();
     Session getSessionById(int id);
-    List<User> getUserBySession(int sessionId);
     //Update
     void update(int id,String sessionName, String invitationLink, Timestamp startTime, Timestamp endTime, String description,String type);
     //Delete

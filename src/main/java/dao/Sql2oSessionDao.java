@@ -54,19 +54,11 @@ public class Sql2oSessionDao implements SessionDao {
         }
     }
 
-    @Override
-    public List<User> getUserBySession(int sessionId) {
-        try(Connection conn = sql2o.open()){
-            return conn.createQuery("SELECT * FROM users WHERE sessionId = :sessionId")
-                    .addParameter("sessionId",sessionId)
-                    .executeAndFetch(User.class);
-        }
-    }
 
     @Override
     public void update(int id,String sessionName, String invitationLink, Timestamp startTime, Timestamp endTime, String description,String type) {
         try (Connection conn = sql2o.open()){
-            String sql = "UPDATE sessions SET (invitationLink, sessionTime, type,description) = (:invitationLink, :sessionTime, :type,:description) WHERE id = :id";
+            String sql = "UPDATE sessions SET (sessionName, invitationLink, startTime, endTime, type,description) = (:sessionName, :invitationLink, :startTime, :endTime ,:description, :type) WHERE id = :id";
             conn.createQuery(sql)
                     .addParameter("sessionName", sessionName)
                     .addParameter("invitationLink", invitationLink)
