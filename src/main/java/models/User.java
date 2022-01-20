@@ -7,13 +7,21 @@ public class User {
     private String position;
     private String email;
     private String name;
-    private int moduleId;
+    private String modules;
 
-    public User(String position, String email, String name, int moduleId) {
+    public User(String position, String email, String name, String modules) {
         this.position = position;
         this.email = email;
         this.name = name;
-        this.moduleId = moduleId;
+        this.modules = modules;
+    }
+
+    public String getModules() {
+        return modules;
+    }
+
+    public void setModules(String modules) {
+        this.modules = modules;
     }
 
     public int getId() {
@@ -48,35 +56,16 @@ public class User {
         this.name = name;
     }
 
-    public int getModuleId() {
-        return moduleId;
-    }
-
-    public void setModuleId(int moduleId) {
-        this.moduleId = moduleId;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         User user = (User) o;
-
-        if (id != user.id) return false;
-        if (moduleId != user.moduleId) return false;
-        if (!position.equals(user.position)) return false;
-        if (!email.equals(user.email)) return false;
-        return name.equals(user.name);
+        return id == user.id && position.equals(user.position) && email.equals(user.email) && name.equals(user.name) && modules.equals(user.modules);
     }
 
     @Override
     public int hashCode() {
-        int result = id;
-        result = 31 * result + position.hashCode();
-        result = 31 * result + email.hashCode();
-        result = 31 * result + name.hashCode();
-        result = 31 * result + moduleId;
-        return result;
+        return Objects.hash(id, position, email, name, modules);
     }
 }

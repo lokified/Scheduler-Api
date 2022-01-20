@@ -16,7 +16,7 @@ public class Sql2oUserDao implements UserDao {
     }
     @Override
     public void addUser(User user) {
-        String sql = "INSERT INTO users (position, email, name,moduleId) VALUES (:position, :email, :name,:moduleId)";
+        String sql = "INSERT INTO users (position, email, name, modules) VALUES (:position, :email, :name, :modules)";
 
         try (Connection conn = sql2o.open()){
             int id = (int) conn.createQuery(sql,true)
@@ -53,21 +53,21 @@ public class Sql2oUserDao implements UserDao {
     @Override
     public Modules getModuleByUser(int userId) {
         try(Connection conn = sql2o.open()){
-            return conn.createQuery("SELECT * FROM modules WHERE userId = :userId")
+            return conn.createQuery("SELECT * FROM modules_users WHERE userId = :userId")
                     .addParameter("userId",userId)
                     .executeAndFetchFirst(Modules.class);
         }
     }
 
     @Override
-    public void update(int id,String position, String email, String name, int moduleId) {
+    public void update(int id,String position, String email, String name, String modules) {
         try (Connection conn = sql2o.open()){
-            String sql = "UPDATE users SET (position, email, name,moduleId) = (:position, :email, :name,:moduleId) WHERE id = :id";
+            String sql = "UPDATE users SET (position, email, name, modules) = (:position, :email, :name, :modules) WHERE id = :id";
             conn.createQuery(sql)
                     .addParameter("position", position)
                     .addParameter("email", email)
                     .addParameter("name", name)
-                    .addParameter("moduleId", moduleId)
+                    .addParameter("modules", modules)
                     .addParameter("id", id)
                     .executeUpdate();
         }

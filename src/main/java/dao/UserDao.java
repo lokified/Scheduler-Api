@@ -16,7 +16,7 @@ public interface UserDao {
 
 
     //Update
-    void update(int id,String position, String email, String name, int moduleId);
+    void update(int id,String position, String email, String name, String modules);
 
     //Delete
     void deleteAllUsers();
