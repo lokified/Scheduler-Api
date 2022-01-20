@@ -131,5 +131,80 @@ public class App {
             return gson.toJson("successfully deleted");
         });
 
+        //modules
+
+        //add a module
+        post("/module/new", "application/json", (req,res) -> {
+            Modules modules = gson.fromJson(req.body(), Modules.class);
+
+            modulesDao.add(modules);
+            res.status(201);
+            res.type("application/json");
+            return gson.toJson(modules);
+        });
+
+        //add user to a module
+        post("/modules/:moduleId/user/new", "application/json", (request, response) -> {
+            int moduleId = Integer.parseInt(request.params("moduleId"));
+            Modules newModules = modulesDao.findById(moduleId);
+            User newUser = gson.fromJson(request.body(), User.class);
+            userDao.addUser(newUser);
+            newUser.setModules(newModules.getName());
+            modulesDao.addUserToModule(newModules, newUser);
+            response.status(201);
+            response.type("application/json");
+            return gson.toJson(newUser);
+        });
+
+        //find module by Id
+        get("/module/:moduleId", "application/json", (request, response) -> {
+            int moduleId = Integer.parseInt(request.params("moduleId"));
+
+            Modules foundModule = modulesDao.findById(moduleId);
+
+            if (foundModule == null) {
+                throw new ApiException(404, String.format("No module with the id: \"%s\" exists", request.params("id")));
+            }
+            else {
+                return gson.toJson(foundModule);
+            }
+        });
+
+        //show all modules
+        get("/modules", "application/json", (request, response) -> {
+            if (modulesDao.getAll().size() > 0) {
+                return gson.toJson(modulesDao.getAll());
+            }
+            else {
+                return "no modules available";
+            }
+        });
+
+        //show users in a module
+        get("/modules/:id/users", "application/json", (req, res) -> {
+            int moduleId = Integer.parseInt(req.params("id"));
+            Modules moduleToFind = modulesDao.findById(moduleId);
+            if (moduleToFind == null){
+                throw new ApiException(404, String.format("No modules with the id: \"%s\" exists", req.params("id")));
+            }
+            else if (modulesDao.getUsersByModule(moduleId).size() == 0){
+                return "{\"message\":\"I'm sorry, but no users are listed for this models.\"}";
+            }
+            else {
+                return gson.toJson(modulesDao.getUsersByModule(moduleId));
+            }
+        });
+
+        //delete a module
+        delete("module/:id/delete","application/json",(req,res) -> {
+            int moduleId = Integer.parseInt(req.params("id"));
+            Modules foundModule = modulesDao.findById(moduleId);
+            if(foundModule == null) {
+                throw new  ApiException(404,String.format("No module with the id: %s exists",req.params("id")));
+            }
+            modulesDao.deleteById(moduleId);
+            return gson.toJson("successfully deleted");
+        });
+
     }
 }
