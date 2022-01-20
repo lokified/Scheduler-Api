@@ -10,8 +10,11 @@ import java.sql.Timestamp;
 import java.util.List;
 
 public class Sql2oSessionDao implements SessionDao {
-    private  Sql2o sql2o;
+    private final  Sql2o sql2o;
 
+    public Sql2oSessionDao(Sql2o sql2o) {
+        this.sql2o = sql2o;
+    }
 
 
     @Override

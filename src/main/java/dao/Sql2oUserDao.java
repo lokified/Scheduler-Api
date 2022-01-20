@@ -9,8 +9,11 @@ import org.sql2o.Sql2oException;
 import java.util.List;
 
 public class Sql2oUserDao implements UserDao {
-    private  Sql2o sql2o;
+    private final  Sql2o sql2o;
 
+    public Sql2oUserDao(Sql2o sql2o){
+        this.sql2o = sql2o;
+    }
     @Override
     public void addUser(User user) {
         String sql = "INSERT INTO users (position, email, name,moduleId) VALUES (:position, :email, :name,:moduleId)";
