@@ -1,10 +1,12 @@
 package dao;
 
 import models.Modules;
+import models.User;
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
 import org.sql2o.Sql2oException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Sql2oModulesDao implements ModulesDao{
@@ -19,7 +21,7 @@ public class Sql2oModulesDao implements ModulesDao{
     @Override
     public void add(Modules modules) {
 
-        String sql = "INSERT INTO modules (name, userId) VALUES (:name, :userId)";
+        String sql = "INSERT INTO modules (name) VALUES (:name)";
         try (Connection conn = sql2o.open()){
             int id = (int) conn.createQuery(sql)
                     .bind(modules)
@@ -52,15 +54,53 @@ public class Sql2oModulesDao implements ModulesDao{
         }
     }
 
+    //adds a user to a module
+    @Override
+    public void addUserToModule(Modules module, User user) {
+        try(Connection conn = sql2o.open()){
+            String sql = "INSERT INTO modules_users(moduleId, userId) VALUES (:moduleId, :userId)";
+            conn.createQuery(sql)
+                    .addParameter("moduleId", module.getId())
+                    .addParameter("userId", user.getId())
+                    .executeUpdate();
+            user.setModules(module.getName());
+        } catch (Sql2oException ex){
+            System.out.println("Unable to add user into module " + ex);
+        }
+    }
+
+    //get users in a module
+    @Override
+    public List<User> getUsersByModule(int moduleId) {
+        List<User> users = new ArrayList<>();
+        String joinQuery = "SELECT userId FROM modules_users WHERE moduleId = :moduleId";
+
+        try (Connection con = sql2o.open()) {
+            List<Integer> allUsersIds = con.createQuery(joinQuery)
+                    .addParameter("moduleId", moduleId)
+                    .executeAndFetch(Integer.class);
+
+            for (Integer userId : allUsersIds){
+                String userQuery = "SELECT * FROM users WHERE id = :userId";
+                users.add(
+                        con.createQuery(userQuery)
+                                .addParameter("userId", userId)
+                                .executeAndFetchFirst(User.class));
+            }
+        } catch (Sql2oException ex){
+            System.out.println(ex);
+        }
+        return users;
+    }
+
     //updates a module
     @Override
-    public void update(int id, String name, int userId) {
+    public void update(int id, String name) {
         try (Connection conn = sql2o.open()){
-            String sql = "UPDATE modules SET (name, userId) = (:name,:userId) WHERE id = :id";
+            String sql = "UPDATE modules SET (name) = (:name) WHERE id = :id";
             conn.createQuery(sql)
                     .addParameter("id", id)
                     .addParameter("name", name)
-                    .addParameter("userId", userId)
                     .executeUpdate();
         }
     }
