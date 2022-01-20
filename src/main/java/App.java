@@ -4,7 +4,9 @@ import dao.Sql2oModulesDao;
 import dao.Sql2oSessionDao;
 import dao.Sql2oUserDao;
 import exceptions.ApiException;
+import models.Modules;
 import models.Session;
+import models.User;
 import org.sql2o.Sql2o;
 
 import static spark.Spark.*;
@@ -20,6 +22,8 @@ public class App {
         Sql2oModulesDao modulesDao = new Sql2oModulesDao(sql2o);
 
         Gson gson = new Gson();
+
+        //sessions
         // get all sessions
         get("/sessions", "application/json", (request, response) -> {
             if (sessionDao.getAllSessions().size() > 0) {
@@ -70,6 +74,62 @@ public class App {
 //            Session session = sessionDao.getAllSessions();
 //            return gson.toJson("successfully deleted");
 //        });
+
+        //user
+        //add a user
+        post("/user/new", "application/json", (req,res) -> {
+            User user = gson.fromJson(req.body(), User.class);
+
+            userDao.addUser(user);
+            res.status(201);
+            res.type("application/json");
+            return gson.toJson(user);
+        });
+
+        //find user by id
+        get("/user/:userId", "application/json", (request, response) -> {
+            int userId = Integer.parseInt(request.params("userId"));
+
+            User foundUser = userDao.getUserById(userId);
+
+            if (foundUser == null) {
+                throw new ApiException(404, String.format("No user with the id: \"%s\" exists", request.params("id")));
+            }
+            else {
+                return gson.toJson(foundUser);
+            }
+        });
+
+        //get module by user
+        get("/userModule/:userId", "application/json", (request, response) -> {
+            int userId = Integer.parseInt(request.params("userId"));
+
+            Modules foundUserModule = userDao.getModuleByUser(userId);
+
+            return gson.toJson(foundUserModule);
+
+        });
+
+        //show all users
+        get("/users", "application/json", (request, response) -> {
+            if (userDao.getAllUsers().size() > 0) {
+                return gson.toJson(userDao.getAllUsers());
+            }
+            else {
+                return "no users available";
+            }
+        });
+
+        //delete a user
+        delete("user/:id/delete","application/json",(req,res) -> {
+            int userId = Integer.parseInt(req.params("id"));
+            User foundUser = userDao.getUserById(userId);
+            if(foundUser == null) {
+                throw new  ApiException(404,String.format("No user with the id: %s exists",req.params("id")));
+            }
+            userDao.deleteUserById(userId);
+            return gson.toJson("successfully deleted");
+        });
 
     }
 }
