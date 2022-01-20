@@ -4,10 +4,13 @@ import dao.Sql2oModulesDao;
 import dao.Sql2oSessionDao;
 import dao.Sql2oUserDao;
 import exceptions.ApiException;
+import models.Announcements;
 import models.Modules;
 import models.Session;
 import models.User;
 import org.sql2o.Sql2o;
+
+import java.util.List;
 
 import static spark.Spark.*;
 
@@ -157,7 +160,7 @@ public class App {
         });
 
         //find module by Id
-        get("/module/:moduleId", "application/json", (request, response) -> {
+        get("/modules/:moduleId", "application/json", (request, response) -> {
             int moduleId = Integer.parseInt(request.params("moduleId"));
 
             Modules foundModule = modulesDao.findById(moduleId);
@@ -206,5 +209,65 @@ public class App {
             return gson.toJson("successfully deleted");
         });
 
+        //announcements
+
+        //add an announcement
+        post("/announcements/new", "application/json", (req,res) -> {
+            Announcements announcements = gson.fromJson(req.body(), Announcements.class);
+
+            announcementsDao.add(announcements);
+            res.status(201);
+            res.type("application/json");
+            return gson.toJson(announcements);
+        });
+
+        //show all announcements
+        get("/announcements", "application/json", (request, response) -> {
+            if (announcementsDao.getAll().size() > 0) {
+                return gson.toJson(announcementsDao.getAll());
+            }
+            else {
+                return "no announcements available";
+            }
+        });
+
+        //find particular announcements
+        get("/announcements/:id", "application/json", (request, response) -> {
+            int announcementId = Integer.parseInt(request.params("id"));
+
+            Announcements foundAnnouncements = announcementsDao.findById(announcementId);
+
+            if (foundAnnouncements == null) {
+                throw new ApiException(404, String.format("No announcement with the id: \"%s\" exists", request.params("id")));
+            }
+            else {
+                return gson.toJson(foundAnnouncements);
+            }
+        });
+
+        //show user announcement
+        get("/announcements/user/:userId", "application/json", (request, response) -> {
+            int userId = Integer.parseInt(request.params("userId"));
+
+            List<Announcements> foundAnnouncements = announcementsDao.getUserAnnouncement(userId);
+
+            if (foundAnnouncements == null) {
+                throw new ApiException(404, String.format("No announcement with the user: \"%s\" exists", request.params("userId")));
+            }
+            else {
+                return gson.toJson(foundAnnouncements);
+            }
+        });
+
+        //delete an announcement
+        delete("announcements/:id/delete","application/json",(req,res) -> {
+            int announcementId = Integer.parseInt(req.params("id"));
+            Announcements foundAnnouncements = announcementsDao.findById(announcementId);
+            if(foundAnnouncements == null) {
+                throw new  ApiException(404,String.format("No announcement with the id: %s exists",req.params("id")));
+            }
+            announcementsDao.deleteById(announcementId);
+            return gson.toJson("successfully deleted");
+        });
     }
 }
