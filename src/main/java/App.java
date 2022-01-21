@@ -18,7 +18,7 @@ public class App {
     public static void main(String[] args) {
 
         String connectionString ="jdbc:postgresql://localhost:5432/scheduler";
-        Sql2o sql2o = new Sql2o(connectionString,"moringa","lokified");
+        Sql2o sql2o = new Sql2o(connectionString,"sitati","Access");
         Sql2oSessionDao sessionDao = new Sql2oSessionDao(sql2o);
         Sql2oUserDao userDao = new Sql2oUserDao(sql2o);
         Sql2oAnnouncementsDao announcementsDao = new Sql2oAnnouncementsDao(sql2o);
