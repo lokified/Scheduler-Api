@@ -10,7 +10,9 @@ import models.Session;
 import models.User;
 import org.sql2o.Sql2o;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static spark.Spark.*;
 
@@ -137,7 +139,7 @@ public class App {
         //modules
 
         //add a module
-        post("/module/new", "application/json", (req,res) -> {
+        post("/modules/new", "application/json", (req,res) -> {
             Modules modules = gson.fromJson(req.body(), Modules.class);
 
             modulesDao.add(modules);
@@ -147,16 +149,27 @@ public class App {
         });
 
         //add user to a module
-        post("/modules/:moduleId/user/new", "application/json", (request, response) -> {
+        post("/user/:userId/modules/:moduleId", "application/json", (request, response) -> {
             int moduleId = Integer.parseInt(request.params("moduleId"));
-            Modules newModules = modulesDao.findById(moduleId);
-            User newUser = gson.fromJson(request.body(), User.class);
-            userDao.addUser(newUser);
-            newUser.setModules(newModules.getName());
-            modulesDao.addUserToModule(newModules, newUser);
-            response.status(201);
-            response.type("application/json");
-            return gson.toJson(newUser);
+            int userId = Integer.parseInt(request.params("userId"));
+
+            Modules foundModule = modulesDao.findById(moduleId);
+            User user = userDao.getUserById(userId);
+
+            if(foundModule == null){
+                throw new ApiException(404, String.format("No module with the id: \"%s\" exist.",
+                        request.params("moduleId")));
+            }
+            if(user == null){
+                throw new ApiException(404, String.format("No user with the id: \"%s\" exist.",
+                        request.params("userId")));
+            }
+
+            modulesDao.addUserToModule(foundModule, user);
+
+            //List<User> moduleUsers = modulesDao.getUsersByModule(moduleId);
+
+            return gson.toJson("success");
         });
 
         //find module by Id
@@ -190,16 +203,18 @@ public class App {
             if (moduleToFind == null){
                 throw new ApiException(404, String.format("No modules with the id: \"%s\" exists", req.params("id")));
             }
-            else if (modulesDao.getUsersByModule(moduleId).size() == 0){
+            else if (modulesDao.getUsersByModule(moduleToFind.getId()).size() == 0){
                 return "{\"message\":\"I'm sorry, but no users are listed for this models.\"}";
             }
             else {
-                return gson.toJson(modulesDao.getUsersByModule(moduleId));
+                List<User> moduleUsers = modulesDao.getUsersByModule(moduleToFind.getId());
+                return gson.toJson(moduleUsers);
             }
+
         });
 
         //delete a module
-        delete("module/:id/delete","application/json",(req,res) -> {
+        delete("modules/:id/delete","application/json",(req,res) -> {
             int moduleId = Integer.parseInt(req.params("id"));
             Modules foundModule = modulesDao.findById(moduleId);
             if(foundModule == null) {
@@ -268,6 +283,22 @@ public class App {
             }
             announcementsDao.deleteById(announcementId);
             return gson.toJson("successfully deleted");
+        });
+
+        //FILTERS
+        exception(ApiException.class, (exception, req, res) -> {
+            ApiException err = (ApiException) exception;
+            Map<String, Object> jsonMap = new HashMap<>();
+            jsonMap.put("status", err.getStatusCode());
+            jsonMap.put("errorMessage", err.getMessage());
+            res.type("application/json");
+            res.status(err.getStatusCode());
+            res.body(gson.toJson(jsonMap));
+        });
+
+
+        after((req, res) -> {
+            res.type("application/json");
         });
     }
 }
