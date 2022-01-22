@@ -64,13 +64,6 @@ public class Sql2oModulesDao implements ModulesDao{
                     .addParameter("userId", user.getId())
                     .executeUpdate();
 
-//            String sizeQuery="SELECT userId FROM modules_users";
-//            List<Integer> size = conn.createQuery(sizeQuery)
-//                    .executeAndFetch(Integer.class);
-//            String updateModuleSize = "UPDATE modules SET size = :size WHERE id=:id";
-//            conn.createQuery(updateModuleSize).addParameter("id",module.getId())
-//                    .addParameter("size",size.size())
-//                    .executeUpdate();
         } catch (Sql2oException ex){
             System.out.println("Unable to add user into module " + ex);
         }
@@ -88,7 +81,7 @@ public class Sql2oModulesDao implements ModulesDao{
                     .executeAndFetch(Integer.class);
 
             for (Integer userId : allUsersIds){
-                String userQuery = "SELECT * FROM users WHERE userId = :userId";
+                String userQuery = "SELECT * FROM users WHERE id = :userId";
                 users.add(
                         con.createQuery(userQuery)
                                 .addParameter("userId", userId)
@@ -104,7 +97,7 @@ public class Sql2oModulesDao implements ModulesDao{
     @Override
     public void update(int id, String name) {
         try (Connection conn = sql2o.open()){
-            String sql = "UPDATE modules SET (name) = (:name) WHERE id = :id";
+            String sql = "UPDATE modules SET name = :name WHERE id = :id";
             conn.createQuery(sql)
                     .addParameter("id", id)
                     .addParameter("name", name)
