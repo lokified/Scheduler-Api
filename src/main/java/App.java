@@ -63,6 +63,17 @@ public class App {
             return gson.toJson(session);
         });
 
+        //updates a session
+        put("/sessions/:id/update","application/json", (req,res) ->{
+            int sessionId = Integer.parseInt(req.params("id"));
+            Session session = gson.fromJson(req.body(), Session.class);
+
+            Session foundSession = sessionDao.getSessionById(sessionId);
+            sessionDao.update(foundSession.getId(), foundSession.getSessionName(), foundSession.getInvitationLink(), foundSession.getStartTime(), foundSession.getEndTime(), foundSession.getDescription(), foundSession.getType());
+            return gson.toJson (session);
+
+        });
+
         //deletes a session
         delete("sessions/:id/delete","application/json",(req,res) -> {
             int sessionId = Integer.parseInt(req.params("id"));
@@ -74,11 +85,6 @@ public class App {
             return gson.toJson("successfully deleted");
         });
 
-        //deletes all session
-//        delete("sessions/delete","application/json",(req,res) -> {
-//            Session session = sessionDao.getAllSessions();
-//            return gson.toJson("successfully deleted");
-//        });
 
         //user
         //add a user
@@ -149,27 +155,22 @@ public class App {
         });
 
         //add user to a module
-        post("/user/:userId/modules/:moduleId", "application/json", (request, response) -> {
+        post("/modules/:moduleId/users/:userId", "application/json", (request, response) -> {
             int moduleId = Integer.parseInt(request.params("moduleId"));
             int userId = Integer.parseInt(request.params("userId"));
 
-            Modules foundModule = modulesDao.findById(moduleId);
+            Modules module = modulesDao.findById(moduleId);
             User user = userDao.getUserById(userId);
 
-            if(foundModule == null){
-                throw new ApiException(404, String.format("No module with the id: \"%s\" exist.",
-                        request.params("moduleId")));
+            if (module != null && user != null) {
+                modulesDao.addUserToModule(module,user);
+
+                response.status(201);
+                return gson.toJson(String.format("user has been added to module  : %s",module.getName()));
             }
-            if(user == null){
-                throw new ApiException(404, String.format("No user with the id: \"%s\" exist.",
-                        request.params("userId")));
+            else {
+                throw new ApiException(404, String.format("module or user does not exist"));
             }
-
-            modulesDao.addUserToModule(foundModule, user);
-
-            //List<User> moduleUsers = modulesDao.getUsersByModule(moduleId);
-
-            return gson.toJson("success");
         });
 
         //find module by Id
@@ -204,11 +205,11 @@ public class App {
                 throw new ApiException(404, String.format("No modules with the id: \"%s\" exists", req.params("id")));
             }
             else if (modulesDao.getUsersByModule(moduleToFind.getId()).size() == 0){
-                return "{\"message\":\"I'm sorry, but no users are listed for this models.\"}";
+                return "{\"message\":\"I'm sorry, but no users are listed for this module.\"}";
             }
             else {
-                List<User> moduleUsers = modulesDao.getUsersByModule(moduleToFind.getId());
-                return gson.toJson(moduleUsers);
+
+                return gson.toJson(modulesDao.getUsersByModule(moduleToFind.getId()));
             }
 
         });
