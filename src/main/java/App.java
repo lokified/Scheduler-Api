@@ -68,8 +68,7 @@ public class App {
             int sessionId = Integer.parseInt(req.params("id"));
             Session session = gson.fromJson(req.body(), Session.class);
 
-            Session foundSession = sessionDao.getSessionById(sessionId);
-            sessionDao.update(foundSession.getId(), foundSession.getSessionName(), foundSession.getInvitationLink(), foundSession.getStartTime(), foundSession.getEndTime(), foundSession.getDescription(), foundSession.getType());
+            sessionDao.update(sessionId, session.getSessionName(), session.getInvitationLink(), session.getStartTime(), session.getEndTime(), session.getDescription(), session.getType());
             return gson.toJson (session);
 
         });
@@ -97,6 +96,16 @@ public class App {
             return gson.toJson(user);
         });
 
+        //updates a user
+        put("/user/:id/update","application/json", (req,res) ->{
+            int userId = Integer.parseInt(req.params("id"));
+            User user = gson.fromJson(req.body(), User.class);
+
+            userDao.update(userId, user.getPosition(), user.getEmail(), user.getName(), user.getModules());
+            return gson.toJson (user);
+
+        });
+
         //find user by id
         get("/user/:userId", "application/json", (request, response) -> {
             int userId = Integer.parseInt(request.params("userId"));
@@ -110,6 +119,7 @@ public class App {
                 return gson.toJson(foundUser);
             }
         });
+
 
         //get module by user
         get("/userModule/:userId", "application/json", (request, response) -> {
@@ -130,6 +140,8 @@ public class App {
                 return "no users available";
             }
         });
+
+
 
         //delete a user
         delete("user/:id/delete","application/json",(req,res) -> {
@@ -152,6 +164,16 @@ public class App {
             res.status(201);
             res.type("application/json");
             return gson.toJson(modules);
+        });
+
+        //updates a module
+        put("/modules/:id/update","application/json", (req,res) ->{
+            int moduleId = Integer.parseInt(req.params("id"));
+            Modules module = gson.fromJson(req.body(), Modules.class);
+
+            modulesDao.update(moduleId, module.getName());
+            return gson.toJson (module);
+
         });
 
         //add user to a module
@@ -186,6 +208,7 @@ public class App {
                 return gson.toJson(foundModule);
             }
         });
+
 
         //show all modules
         get("/modules", "application/json", (request, response) -> {
@@ -235,6 +258,16 @@ public class App {
             res.status(201);
             res.type("application/json");
             return gson.toJson(announcements);
+        });
+
+        //updates a user
+        put("/announcements/:id/update","application/json", (req,res) ->{
+            int announcementId = Integer.parseInt(req.params("id"));
+            Announcements announcements = gson.fromJson(req.body(), Announcements.class);
+
+            announcementsDao.update(announcementId, announcements.getTitle(), announcements.getUserId(), announcements.getDescription());
+            return gson.toJson (announcements);
+
         });
 
         //show all announcements
