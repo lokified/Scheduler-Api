@@ -33,6 +33,48 @@ A REST API for querying and retrieving information about session and modules in 
 
     5. gradle run 
 
+## Database Setup
+* Run psql < create.sql in the project root to create the database
+\c scheduler;
+
+* CREATE TABLE announcements(
+    id serial PRIMARY KEY,
+    title VARCHAR ,
+    userId INTEGER ,
+    description VARCHAR
+);
+
+* CREATE TABLE modules(
+    id serial PRIMARY KEY ,
+    name VARCHAR
+);
+
+
+* CREATE TABLE users(
+id serial PRIMARY KEY,
+position VARCHAR,
+email VARCHAR,
+name VARCHAR,
+modules VARCHAR
+);
+
+* CREATE TABLE sessions(
+id serial PRIMARY KEY,
+sessionName VARCHAR ,
+invitationLink VARCHAR,
+startTime TIMESTAMP ,
+endTime TIMESTAMP ,
+description VARCHAR,
+type VARCHAR
+ );
+
+* CREATE TABLE modules_users(
+    id SERIAL PRIMARY KEY,
+    moduleId INTEGER,
+    userId INTEGER
+);
+
+* CREATE DATABASE scheduler_test WITH TEMPLATE scheduler;
 
 ## Tests
     1. cd Scheduler-Api
@@ -43,14 +85,23 @@ A REST API for querying and retrieving information about session and modules in 
 
 | EndPoint                                |   Functionality                      |
 | --------------------------------------- | ------------------------------------:|
-| POST /module/new                        | Create a new module              |
-| GET /module                             | View modules                     |
+| POST /user/new                          | Create a new user                    |
+| PUT /user/:id/update                    | Update a user                        |
+| GET /user/:userId                       | View user by id                      |
+| GET /users                              | View all users                       |
+| DELETE user/:id/delete                  | Delete a user                        |
+| GET /module                             | View modules                         |
 | GET /modules/:id/users                  | View users in a module               |
-| DELETE module/:id/delete                | Delete a module        |
-| POST /announcements/new                 | create announcement         |
-| GET /announcements                      | View all announcements                  |
-| POST /sessions/new                      | Create a session                  |
-| POST /modules/:moduleId/user/new        | Add user to module                    |
+| DELETE module/:id/delete                | Delete a module                      |
+| PUT /modules/:id/update                 | Update a module                      |
+| POST /announcements/new                 | create announcement                  |
+| GET /announcements                      | View all announcements               |
+| PUT /modules/:id/update                 | Update an announcement               |
+| POST /sessions/new                      | Create a session                     |
+| GET /sessions/:sessionId                | View session by id                   |
+| PUT /sessions/:id/update                | Update a session                     |
+| DELETE sessions/:id/delete              | Delete a session                     |
+| POST /modules/:moduleId/user/new        | Add user to module                   |
 
 ## Limitations
 
