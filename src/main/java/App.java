@@ -20,7 +20,7 @@ public class App {
     public static void main(String[] args) {
 
         String connectionString ="jdbc:postgresql://localhost:5432/scheduler";
-        Sql2o sql2o = new Sql2o(connectionString,"moringa","lokified");
+        Sql2o sql2o = new Sql2o(connectionString,"sitati","Access");
         Sql2oSessionDao sessionDao = new Sql2oSessionDao(sql2o);
         Sql2oUserDao userDao = new Sql2oUserDao(sql2o);
         Sql2oAnnouncementsDao announcementsDao = new Sql2oAnnouncementsDao(sql2o);
@@ -63,6 +63,16 @@ public class App {
             return gson.toJson(session);
         });
 
+        //updates a session
+        put("/sessions/:id/update","application/json", (req,res) ->{
+            int sessionId = Integer.parseInt(req.params("id"));
+            Session session = gson.fromJson(req.body(), Session.class);
+
+            sessionDao.update(sessionId, session.getSessionName(), session.getInvitationLink(), session.getStartTime(), session.getEndTime(), session.getDescription(), session.getType());
+            return gson.toJson (session);
+
+        });
+
         //deletes a session
         delete("sessions/:id/delete","application/json",(req,res) -> {
             int sessionId = Integer.parseInt(req.params("id"));
@@ -74,11 +84,6 @@ public class App {
             return gson.toJson("successfully deleted");
         });
 
-        //deletes all session
-//        delete("sessions/delete","application/json",(req,res) -> {
-//            Session session = sessionDao.getAllSessions();
-//            return gson.toJson("successfully deleted");
-//        });
 
         //user
         //add a user
@@ -89,6 +94,16 @@ public class App {
             res.status(201);
             res.type("application/json");
             return gson.toJson(user);
+        });
+
+        //updates a user
+        put("/user/:id/update","application/json", (req,res) ->{
+            int userId = Integer.parseInt(req.params("id"));
+            User user = gson.fromJson(req.body(), User.class);
+
+            userDao.update(userId, user.getPosition(), user.getEmail(), user.getName(), user.getModules());
+            return gson.toJson (user);
+
         });
 
         //find user by id
@@ -104,6 +119,7 @@ public class App {
                 return gson.toJson(foundUser);
             }
         });
+
 
         //get module by user
         get("/userModule/:userId", "application/json", (request, response) -> {
@@ -124,6 +140,8 @@ public class App {
                 return "no users available";
             }
         });
+
+
 
         //delete a user
         delete("user/:id/delete","application/json",(req,res) -> {
@@ -148,28 +166,35 @@ public class App {
             return gson.toJson(modules);
         });
 
+        //updates a module
+        put("/modules/:id/update","application/json", (req,res) ->{
+            int moduleId = Integer.parseInt(req.params("id"));
+            Modules module = gson.fromJson(req.body(), Modules.class);
+
+            modulesDao.update(moduleId, module.getName());
+            return gson.toJson (module);
+
+        });
+
         //add user to a module
-        post("/user/:userId/modules/:moduleId", "application/json", (request, response) -> {
+
+        post("/modules/:moduleId/users/:userId", "application/json", (request, response) -> {
             int moduleId = Integer.parseInt(request.params("moduleId"));
             int userId = Integer.parseInt(request.params("userId"));
 
-            Modules foundModule = modulesDao.findById(moduleId);
+            Modules module = modulesDao.findById(moduleId);
             User user = userDao.getUserById(userId);
 
-            if(foundModule == null){
-                throw new ApiException(404, String.format("No module with the id: \"%s\" exist.",
-                        request.params("moduleId")));
+            if (module != null && user != null) {
+                modulesDao.addUserToModule(module,user);
+
+                response.status(201);
+                return gson.toJson(String.format("user has been added to module  : %s",module.getName()));
             }
-            if(user == null){
-                throw new ApiException(404, String.format("No user with the id: \"%s\" exist.",
-                        request.params("userId")));
+            else {
+                throw new ApiException(404, String.format("module or user does not exist"));
+
             }
-
-            modulesDao.addUserToModule(foundModule, user);
-
-            //List<User> moduleUsers = modulesDao.getUsersByModule(moduleId);
-
-            return gson.toJson("success");
         });
 
         //find module by Id
@@ -185,6 +210,7 @@ public class App {
                 return gson.toJson(foundModule);
             }
         });
+
 
         //show all modules
         get("/modules", "application/json", (request, response) -> {
@@ -204,11 +230,11 @@ public class App {
                 throw new ApiException(404, String.format("No modules with the id: \"%s\" exists", req.params("id")));
             }
             else if (modulesDao.getUsersByModule(moduleToFind.getId()).size() == 0){
-                return "{\"message\":\"I'm sorry, but no users are listed for this models.\"}";
+                return "{\"message\":\"I'm sorry, but no users are listed for this module.\"}";
             }
             else {
-                List<User> moduleUsers = modulesDao.getUsersByModule(moduleToFind.getId());
-                return gson.toJson(moduleUsers);
+
+                return gson.toJson(modulesDao.getUsersByModule(moduleToFind.getId()));
             }
 
         });
@@ -234,6 +260,16 @@ public class App {
             res.status(201);
             res.type("application/json");
             return gson.toJson(announcements);
+        });
+
+        //updates a user
+        put("/announcements/:id/update","application/json", (req,res) ->{
+            int announcementId = Integer.parseInt(req.params("id"));
+            Announcements announcements = gson.fromJson(req.body(), Announcements.class);
+
+            announcementsDao.update(announcementId, announcements.getTitle(), announcements.getUserId(), announcements.getDescription());
+            return gson.toJson (announcements);
+
         });
 
         //show all announcements
