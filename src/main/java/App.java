@@ -147,16 +147,20 @@ public class App {
         });
 
         //add user to a module
-        post("/modules/:moduleId/user/new", "application/json", (request, response) -> {
-            int moduleId = Integer.parseInt(request.params("moduleId"));
-            Modules newModules = modulesDao.findById(moduleId);
-            User newUser = gson.fromJson(request.body(), User.class);
-            userDao.addUser(newUser);
-            newUser.setModules(newModules.getName());
-            modulesDao.addUserToModule(newModules, newUser);
-            response.status(201);
-            response.type("application/json");
-            return gson.toJson(newUser);
+        post("/module/:moduleId/user/:userId", "application/json", (req, res) -> {
+            int userId = Integer.parseInt(req.params("userId"));
+            int moduleId = Integer.parseInt(req.params("moduleId"));
+            User user = userDao.getUserById(userId);
+            Modules modules = modulesDao.findById(moduleId);
+
+            if (user != null && modules != null){
+                modulesDao.addUserToModule(modules, user);
+                res.status(201);
+                return gson.toJson(String.format("News Briefing '%s' and department '%s' have been associated",modules.getName(), user.getName()));
+            }
+            else {
+                throw new ApiException(404, String.format("News Briefing or Department does not exist"));
+            }
         });
 
         //find module by Id

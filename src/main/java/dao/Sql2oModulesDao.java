@@ -63,7 +63,6 @@ public class Sql2oModulesDao implements ModulesDao{
                     .addParameter("moduleId", module.getId())
                     .addParameter("userId", user.getId())
                     .executeUpdate();
-            user.setModules(module.getName());
         } catch (Sql2oException ex){
             System.out.println("Unable to add user into module " + ex);
         }
