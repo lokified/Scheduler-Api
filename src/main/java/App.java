@@ -101,7 +101,7 @@ public class App {
             int userId = Integer.parseInt(req.params("id"));
             User user = gson.fromJson(req.body(), User.class);
 
-            userDao.update(userId, user.getPosition(), user.getEmail(), user.getName(), user.getModules());
+            userDao.update(userId, user.getPosition(), user.getEmail(), user.getName(), user.getModuleId());
             return gson.toJson (user);
 
         });
@@ -177,7 +177,7 @@ public class App {
         });
 
         //add user to a module
-        post("/modules/:moduleId/users/:userId", "application/json", (request, response) -> {
+        post("/user/:userId/modules/:moduleId", "application/json", (request, response) -> {
             int moduleId = Integer.parseInt(request.params("moduleId"));
             int userId = Integer.parseInt(request.params("userId"));
 

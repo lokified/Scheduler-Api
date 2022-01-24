@@ -73,24 +73,32 @@ public class Sql2oModulesDao implements ModulesDao{
     @Override
     public List<User> getUsersByModule(int moduleId) {
         List<User> users = new ArrayList<>();
-        String joinQuery = "SELECT userId FROM modules_users WHERE moduleId = :moduleId";
 
-        try (Connection con = sql2o.open()) {
-            List<Integer> allUsersIds = con.createQuery(joinQuery)
-                    .addParameter("moduleId", moduleId)
-                    .executeAndFetch(Integer.class);
+        String sql = "SELECT * FROM users WHERE moduleId = :moduleId";
 
-            for (Integer userId : allUsersIds){
-                String userQuery = "SELECT * FROM users WHERE id = :userId";
-                users.add(
-                        con.createQuery(userQuery)
-                                .addParameter("userId", userId)
-                                .executeAndFetchFirst(User.class));
-            }
-        } catch (Sql2oException ex){
-            System.out.println(ex);
+        try (Connection conn = sql2o.open()){
+            return conn.createQuery(sql)
+                    .addParameter("moduleId",moduleId)
+                    .executeAndFetch(User.class);
         }
-        return users;
+//        String joinQuery = "SELECT userId FROM modules_users WHERE moduleId = :moduleId";
+//
+//        try (Connection con = sql2o.open()) {
+//            List<Integer> allUsersIds = con.createQuery(joinQuery)
+//                    .addParameter("moduleId", moduleId)
+//                    .executeAndFetch(Integer.class);
+//
+//            for (Integer userId : allUsersIds){
+//                String userQuery = "SELECT * FROM users WHERE id = :userId";
+//                users.add(
+//                        con.createQuery(userQuery)
+//                                .addParameter("userId", userId)
+//                                .executeAndFetchFirst(User.class));
+//            }
+//        } catch (Sql2oException ex){
+//            System.out.println(ex);
+//        }
+//        return users;
     }
 
     //updates a module

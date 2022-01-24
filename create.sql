@@ -21,7 +21,7 @@ id serial PRIMARY KEY,
 position VARCHAR,
 email VARCHAR,
 name VARCHAR,
-modules VARCHAR
+moduleId INTEGER
 );
 
 CREATE TABLE sessions(
