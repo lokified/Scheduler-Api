@@ -7,21 +7,21 @@ public class User {
     private String position;
     private String email;
     private String name;
-    private String modules;
+    private int moduleId;
 
-    public User(String position, String email, String name, String modules) {
+    public User(String position, String email, String name, int moduleId) {
         this.position = position;
         this.email = email;
         this.name = name;
-        this.modules = modules;
+        this.moduleId = moduleId;
     }
 
-    public String getModules() {
-        return modules;
+    public int getModuleId() {
+        return moduleId;
     }
 
-    public void setModules(String modules) {
-        this.modules = modules;
+    public void setModuleId(int moduleId) {
+        this.moduleId = moduleId;
     }
 
     public int getId() {
@@ -61,11 +61,11 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return id == user.id && position.equals(user.position) && email.equals(user.email) && name.equals(user.name) && modules.equals(user.modules);
+        return id == user.id && moduleId == user.moduleId && position.equals(user.position) && email.equals(user.email) && name.equals(user.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, position, email, name, modules);
+        return Objects.hash(id, position, email, name, moduleId);
     }
 }

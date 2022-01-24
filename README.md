@@ -55,7 +55,7 @@ id serial PRIMARY KEY,
 position VARCHAR,
 email VARCHAR,
 name VARCHAR,
-modules VARCHAR
+moduleId INTEGER
 );
 
 * CREATE TABLE sessions(
@@ -83,25 +83,25 @@ type VARCHAR
 ## API Endpoints
 
 
-| EndPoint                                |   Functionality                      |
-| --------------------------------------- | ------------------------------------:|
-| POST /user/new                          | Create a new user                    |
-| PUT /user/:id/update                    | Update a user                        |
-| GET /user/:userId                       | View user by id                      |
-| GET /users                              | View all users                       |
-| DELETE user/:id/delete                  | Delete a user                        |
-| GET /module                             | View modules                         |
-| GET /modules/:id/users                  | View users in a module               |
-| DELETE module/:id/delete                | Delete a module                      |
-| PUT /modules/:id/update                 | Update a module                      |
-| POST /announcements/new                 | create announcement                  |
-| GET /announcements                      | View all announcements               |
-| PUT /modules/:id/update                 | Update an announcement               |
-| POST /sessions/new                      | Create a session                     |
-| GET /sessions/:sessionId                | View session by id                   |
-| PUT /sessions/:id/update                | Update a session                     |
-| DELETE sessions/:id/delete              | Delete a session                     |
-| POST /modules/:moduleId/user/new        | Add user to module                   |
+| EndPoint                             |   Functionality                      |
+|--------------------------------------| ------------------------------------:|
+| POST /user/new                       | Create a new user                    |
+| PUT /user/:id/update                 | Update a user                        |
+| GET /user/:userId                    | View user by id                      |
+| GET /users                           | View all users                       |
+| DELETE user/:id/delete               | Delete a user                        |
+| GET /modules                         | View modules                         |
+| GET /modules/:id/users               | View users in a module               |
+| DELETE modules/:id/delete            | Delete a module                      |
+| PUT /modules/:id/update              | Update a module                      |
+| POST /announcements/new              | create announcement                  |
+| GET /announcements                   | View all announcements               |
+| PUT /announcements/:id/update        | Update an announcement               |
+| POST /sessions/new                   | Create a session                     |
+| GET /sessions/:sessionId             | View session by id                   |
+| PUT /sessions/:id/update             | Update a session                     |
+| DELETE sessions/:id/delete           | Delete a session                     |
+| POST /user/:userId/modules/:moduleId | Add user to module                   |
 
 ## Limitations
 
