@@ -10,7 +10,9 @@ import models.Session;
 import models.User;
 import org.sql2o.Sql2o;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static spark.Spark.*;
 
@@ -61,6 +63,16 @@ public class App {
             return gson.toJson(session);
         });
 
+        //updates a session
+        put("/sessions/:id/update","application/json", (req,res) ->{
+            int sessionId = Integer.parseInt(req.params("id"));
+            Session session = gson.fromJson(req.body(), Session.class);
+
+            sessionDao.update(sessionId, session.getSessionName(), session.getInvitationLink(), session.getStartTime(), session.getEndTime(), session.getDescription(), session.getType());
+            return gson.toJson (session);
+
+        });
+
         //deletes a session
         delete("sessions/:id/delete","application/json",(req,res) -> {
             int sessionId = Integer.parseInt(req.params("id"));
@@ -72,11 +84,6 @@ public class App {
             return gson.toJson("successfully deleted");
         });
 
-        //deletes all session
-//        delete("sessions/delete","application/json",(req,res) -> {
-//            Session session = sessionDao.getAllSessions();
-//            return gson.toJson("successfully deleted");
-//        });
 
         //user
         //add a user
@@ -87,6 +94,16 @@ public class App {
             res.status(201);
             res.type("application/json");
             return gson.toJson(user);
+        });
+
+        //updates a user
+        put("/user/:id/update","application/json", (req,res) ->{
+            int userId = Integer.parseInt(req.params("id"));
+            User user = gson.fromJson(req.body(), User.class);
+
+            userDao.update(userId, user.getPosition(), user.getEmail(), user.getName(), user.getModules());
+            return gson.toJson (user);
+
         });
 
         //find user by id
@@ -102,6 +119,7 @@ public class App {
                 return gson.toJson(foundUser);
             }
         });
+
 
         //get module by user
         get("/userModule/:userId", "application/json", (request, response) -> {
@@ -123,6 +141,8 @@ public class App {
             }
         });
 
+
+
         //delete a user
         delete("user/:id/delete","application/json",(req,res) -> {
             int userId = Integer.parseInt(req.params("id"));
@@ -137,7 +157,7 @@ public class App {
         //modules
 
         //add a module
-        post("/module/new", "application/json", (req,res) -> {
+        post("/modules/new", "application/json", (req,res) -> {
             Modules modules = gson.fromJson(req.body(), Modules.class);
 
             modulesDao.add(modules);
@@ -146,20 +166,34 @@ public class App {
             return gson.toJson(modules);
         });
 
-        //add user to a module
-        post("/module/:moduleId/user/:userId", "application/json", (req, res) -> {
-            int userId = Integer.parseInt(req.params("userId"));
-            int moduleId = Integer.parseInt(req.params("moduleId"));
-            User user = userDao.getUserById(userId);
-            Modules modules = modulesDao.findById(moduleId);
+        //updates a module
+        put("/modules/:id/update","application/json", (req,res) ->{
+            int moduleId = Integer.parseInt(req.params("id"));
+            Modules module = gson.fromJson(req.body(), Modules.class);
 
-            if (user != null && modules != null){
-                modulesDao.addUserToModule(modules, user);
-                res.status(201);
-                return gson.toJson(String.format("News Briefing '%s' and department '%s' have been associated",modules.getName(), user.getName()));
+            modulesDao.update(moduleId, module.getName());
+            return gson.toJson (module);
+
+        });
+
+        //add user to a module
+
+        post("/modules/:moduleId/users/:userId", "application/json", (request, response) -> {
+            int moduleId = Integer.parseInt(request.params("moduleId"));
+            int userId = Integer.parseInt(request.params("userId"));
+
+            Modules module = modulesDao.findById(moduleId);
+            User user = userDao.getUserById(userId);
+
+            if (module != null && user != null) {
+                modulesDao.addUserToModule(module,user);
+
+                response.status(201);
+                return gson.toJson(String.format("user has been added to module  : %s",module.getName()));
             }
             else {
-                throw new ApiException(404, String.format("News Briefing or Department does not exist"));
+                throw new ApiException(404, String.format("module or user does not exist"));
+
             }
         });
 
@@ -176,6 +210,7 @@ public class App {
                 return gson.toJson(foundModule);
             }
         });
+
 
         //show all modules
         get("/modules", "application/json", (request, response) -> {
@@ -194,16 +229,18 @@ public class App {
             if (moduleToFind == null){
                 throw new ApiException(404, String.format("No modules with the id: \"%s\" exists", req.params("id")));
             }
-            else if (modulesDao.getUsersByModule(moduleId).size() == 0){
-                return "{\"message\":\"I'm sorry, but no users are listed for this models.\"}";
+            else if (modulesDao.getUsersByModule(moduleToFind.getId()).size() == 0){
+                return "{\"message\":\"I'm sorry, but no users are listed for this module.\"}";
             }
             else {
-                return gson.toJson(modulesDao.getUsersByModule(moduleId));
+
+                return gson.toJson(modulesDao.getUsersByModule(moduleToFind.getId()));
             }
+
         });
 
         //delete a module
-        delete("module/:id/delete","application/json",(req,res) -> {
+        delete("modules/:id/delete","application/json",(req,res) -> {
             int moduleId = Integer.parseInt(req.params("id"));
             Modules foundModule = modulesDao.findById(moduleId);
             if(foundModule == null) {
@@ -223,6 +260,16 @@ public class App {
             res.status(201);
             res.type("application/json");
             return gson.toJson(announcements);
+        });
+
+        //updates a user
+        put("/announcements/:id/update","application/json", (req,res) ->{
+            int announcementId = Integer.parseInt(req.params("id"));
+            Announcements announcements = gson.fromJson(req.body(), Announcements.class);
+
+            announcementsDao.update(announcementId, announcements.getTitle(), announcements.getUserId(), announcements.getDescription());
+            return gson.toJson (announcements);
+
         });
 
         //show all announcements
@@ -272,6 +319,22 @@ public class App {
             }
             announcementsDao.deleteById(announcementId);
             return gson.toJson("successfully deleted");
+        });
+
+        //FILTERS
+        exception(ApiException.class, (exception, req, res) -> {
+            ApiException err = (ApiException) exception;
+            Map<String, Object> jsonMap = new HashMap<>();
+            jsonMap.put("status", err.getStatusCode());
+            jsonMap.put("errorMessage", err.getMessage());
+            res.type("application/json");
+            res.status(err.getStatusCode());
+            res.body(gson.toJson(jsonMap));
+        });
+
+
+        after((req, res) -> {
+            res.type("application/json");
         });
     }
 }

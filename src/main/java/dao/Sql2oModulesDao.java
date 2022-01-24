@@ -96,7 +96,7 @@ public class Sql2oModulesDao implements ModulesDao{
     @Override
     public void update(int id, String name) {
         try (Connection conn = sql2o.open()){
-            String sql = "UPDATE modules SET (name) = (:name) WHERE id = :id";
+            String sql = "UPDATE modules SET name = :name WHERE id = :id";
             conn.createQuery(sql)
                     .addParameter("id", id)
                     .addParameter("name", name)
