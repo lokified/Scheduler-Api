@@ -14,7 +14,7 @@ public interface SessionDao {
     List<Session> getAllSessions();
     Session getSessionById(int id);
     //Update
-    void update(int id,String sessionName, String invitationLink, Timestamp startTime, Timestamp endTime, String description,String type);
+    void update(int id,String sessionName, String invitationLink, String startTime, String endTime, String description,String type);
     //Delete
     void deleteAllSessions();
     void deleteSessionById(int id);

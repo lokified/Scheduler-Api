@@ -13,11 +13,11 @@ public class Session {
 
     private String type;
 
-    public Session(String sessionName, String invitationLink, Timestamp startTime, Timestamp endTime, String description, String type) {
+    public Session(String sessionName, String invitationLink, String startTime, String endTime, String description, String type) {
         this.sessionName = sessionName;
         this.invitationLink = invitationLink;
-        this.startTime = startTime;
-        this.endTime  =endTime;
+        this.startTime = convertStringToTimestamp(startTime);
+        this.endTime  = convertStringToTimestamp(endTime);
         this.description = description;
         this.type = type;
     }
@@ -56,6 +56,9 @@ public class Session {
 
     public String getInvitationLink() {
         return invitationLink;
+    }
+    public Timestamp convertStringToTimestamp(String dateString){
+        return Timestamp.valueOf(dateString);
     }
 
     @Override
