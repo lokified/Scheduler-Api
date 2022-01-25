@@ -17,10 +17,18 @@ import java.util.Map;
 import static spark.Spark.*;
 
 public class App {
+    static int getHerokuAssignedPort() {
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        if (processBuilder.environment().get("PORT") != null) {
+            return Integer.parseInt(processBuilder.environment().get("PORT"));
+        }
+        return 4567; //return default port if heroku-port isn't set (i.e. on localhost)
+    }
     public static void main(String[] args) {
+        port(getHerokuAssignedPort());
 
-        String connectionString ="jdbc:postgresql://localhost:5432/scheduler";
-        Sql2o sql2o = new Sql2o(connectionString,"moringa","lokified");
+        String connectionString ="jdbc:postgresql://ec2-18-210-153-185.compute-1.amazonaws.com:5432/d8f9a3rh97sron";
+        Sql2o sql2o = new Sql2o(connectionString,"wlqdgczyeppbsm","c95733be32f78d37c13d3fc7d40677849be89bb070ac1e9529ae4233f527b50d");
         Sql2oSessionDao sessionDao = new Sql2oSessionDao(sql2o);
         Sql2oUserDao userDao = new Sql2oUserDao(sql2o);
         Sql2oAnnouncementsDao announcementsDao = new Sql2oAnnouncementsDao(sql2o);
